@@ -13,6 +13,11 @@ This project is to set up a LAMP (Linux, Apache, MySQL, PHP) stack development e
 8. Navigate to **localhost:8080** to test Apache is running
 
 
-######## This is now ready for you to start development with a LAMP stack on a Centos environment.
+## Manage Multiple VMs
+1. Navigate into the Multiple-VMs folder
+2. Issue **vagrant up web** to bring up only the web apache server
+3. Issue **vagrant up db** to bring up only the MySQL server 
+4. Communicate between the two VMs with **vagrant ssh**
+5. To bring up both machines at once , run **vangrant up**
 
 
