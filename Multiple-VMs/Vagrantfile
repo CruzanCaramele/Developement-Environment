@@ -1,0 +1,45 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "chef/centos-6.5-i386"
+  #config.vm.box_check_update = false
+
+  
+
+  # prevent virtual box guest additions from auto-updates
+  config.vbguest.auto_update = false
+
+  # File Provisioner
+  config.vm.provision "file", source:"~/vagrant/files/git-config", destination: "~/.gitconfig"
+
+  # Shell provisoner from web on github
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/CruzanCaramele/Developement-Environment/master/scripts/centos-common.sh"
+
+
+  # web provisoner (Apache)
+  config.vm.define "web" do |web|
+
+    web.vm.hostname = "web-server"
+
+    web.vm.network "forwarded_port", guest: 80, host: 8080
+
+    # set up private networking to allow communication to databse
+    web.vm.network "private_network", ip: "192.168.10.2"
+
+    web.vm.provision "shell", path: "https://raw.githubusercontent.com/CruzanCaramele/Developement-Environment/master/scripts/centos-web.sh"
+
+  end
+
+  # database provisioner (MySQL)
+  config.vm.define "db" do |db|
+    db.vm.hostname = "database-server"
+
+    db.vm.network "private_network", ip: "192.168.10.3"
+
+    db.vm.provision "shell", path: "https://raw.githubusercontent.com/CruzanCaramele/Developement-Environment/master/scripts/centos-database.sh"
+  end
+
+
+end
