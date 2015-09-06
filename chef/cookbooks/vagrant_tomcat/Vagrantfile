@@ -1,0 +1,54 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+Vagrant.configure(2) do |config|
+  # The most common configuration options are documented and commented below.
+  # For a complete reference, please see the online documentation at
+  # https://docs.vagrantup.com.
+
+  # Every Vagrant development environment requires a box. You can search for
+  # boxes at https://atlas.hashicorp.com/search.
+  config.vm.box = "chef/centos-6.5-i386"
+
+  # prevent virtual box guest additions from auto-updates
+  config.vbguest.auto_update = false
+
+  # File Provisioner
+  config.vm.provision "file", source:"C:\\Users\\hp\\vagrant\\files", destination: "~/.gitconfig"
+
+  # Shell provisoner from web on github
+  config.vm.provision "shell", path: "https://raw.githubusercontent.com/CruzanCaramele/Developement-Environment/master/scripts/centos-common.sh"  
+  
+  # use latest version of chef client
+  config.omnibus.chef_version = :latest
+
+  #port forwarding for tomcat server
+  config.vm.network "forwarded_port", guest:8080, host:8020
+
+  # Disable automatic box update checking. If you disable this, then
+  # boxes will only be checked for updates when the user runs
+  # `vagrant box outdated`. This is not recommended.
+  # config.vm.box_check_update = false
+
+
+  #
+  config.vm.provider "virtualbox" do |vb|  
+     vb.memory = "1024"
+  end
+
+  config.vm.provision "chef_solo" do |chef|
+    chef.cookbooks_path = ["~/vagrant/chef/supermarket", "~/vagrant/chef/cookbooks"]
+    chef.add_recipe "java"
+    chef.add_recipe "vagrant_tomcat"
+
+    chef.json = {
+      "java" => {
+        "jdk_version" => "7"
+      }
+    }
+  end  
+end
